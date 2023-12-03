@@ -14,7 +14,7 @@ const registerUserSchema = z
             })
             .max(
                 validationRules.maxUsernameLength, {
-                message: formatString(MaxCharactersF, validationRules.maxPasswordLength)
+                message: formatString(MaxCharactersF, validationRules.maxUsernameLength)
             })
             .trim(),
         password: z.string()

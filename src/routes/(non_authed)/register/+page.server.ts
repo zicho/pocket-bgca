@@ -5,6 +5,7 @@ import { message, superValidate } from "sveltekit-superforms/server";
 import registerUserSchema from "$lib/data/validation_schemas/registerUserSchema";
 import registerUserAndReturnSession from "$lib/db/queries/authentication/registerUserAndReturnSession";
 import type { Session } from "lucia";
+import { pb } from "$lib/db/pb";
 
 export const load = (async (event) => {
     const form = await superValidate(event, registerUserSchema);
@@ -15,7 +16,6 @@ export const load = (async (event) => {
     newData.confirm_password = "";
 
     form.data = newData;
-
 
     return {
         form
@@ -37,12 +37,14 @@ export const actions: Actions = {
 
         const response = await registerUserAndReturnSession(form.data);
 
-        if (response.error) {
-            return message(form, response.message);
-        } else {
-            locals.auth.setSession(response.result);
+        function formatMessages(messages: string[]): string {
+            return messages.map(item => `${item}</br>`).join('');
         }
 
+        if (response.error) {
+            return message(form, formatMessages(response.messages));
+        } 
+        
         throw redirect(
             302,
             "/",

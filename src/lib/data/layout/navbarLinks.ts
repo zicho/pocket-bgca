@@ -1,8 +1,8 @@
 import type { INavbarLink } from "$lib/components/interfaces/components/INavbarLink";
-import type { User } from "lucia";
 import { UserIcon, MailIcon, GameIcon, CalendarIcon, SignoutIcon, LoginIcon, RegisterIcon, DashboardIcon } from "$lib/data/icons";
+import type { AuthModel } from "pocketbase";
 
-const generateNavbarLinks = (user: User): INavbarLink[] => {
+const generateNavbarLinks = (user: AuthModel | undefined): INavbarLink[] => {
     return [
         {
             url: `/dashboard`,

@@ -1,11 +1,9 @@
-import { userProfiles } from "$lib/db/schema/users";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const upsertProfileSchema = createInsertSchema(userProfiles, {
+export const upsertProfileSchema = z.object({
 	description: z
 		.string({})
-		.max(200, { message: "Profile description can't exceed 200 characters." })
+		.max(400, { message: "Profile description can't exceed 400 characters." })
 		.trim(),
 	signature: z.string({}).max(45, { message: "Signature can't exceed 40 characters." }).trim()
 }).pick({

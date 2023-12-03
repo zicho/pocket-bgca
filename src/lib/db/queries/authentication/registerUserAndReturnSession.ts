@@ -1,38 +1,59 @@
-import { CouldNotCreateUser, UsernameAlreadyTaken } from "$lib/data/strings/ErrorMessages";
+import { CouldNotCreateUser, UnknownError, UsernameAlreadyTaken } from "$lib/data/strings/ErrorMessages";
 import { successfulResponse, type ApiResponse, failedResponse } from "$lib/data/types/ApiResponse";
-import { auth } from "$lib/server/lucia";
-import { LuciaError, type Session } from "lucia";
-import { generateRandomString } from "lucia/utils";
+import { pb } from "$lib/db/pb";
+import { LuciaError } from "lucia";
+import { ClientResponseError } from "pocketbase";
 
-export default async function registerUserAndReturnSession({ username, password }: { username: string, password: string }): Promise<ApiResponse<Session>> {
+function parseClientResponseErrors(e: ClientResponseError): string[] {
     try {
-        const user = await auth.createUser({
-            userId: generateRandomString(15),
-            key: {
-                providerId: "username", // auth method
-                providerUserId: username.toLowerCase(), // unique id when using "username" auth method
-                password // hashed by Lucia
-            },
-            attributes: {
-                username
-            }
-        });
+        const errors = Object.values(e.response.data as { code: string, message: string }[]);
+        const messages: string[] = [];
 
-        const session = await auth.createSession({
-            userId: user.userId,
-            attributes: {}
-        });
-
-        return successfulResponse(session);
-    } catch (e) {
-        // todo: log
-
-        console.log(e);
-
-        if (e instanceof LuciaError && e.message === "AUTH_DUPLICATE_KEY_ID") {
-            return failedResponse(UsernameAlreadyTaken);
+        if (!errors) {
+            return [UnknownError];
         }
 
-        return failedResponse(CouldNotCreateUser);
+        const knownErrorCodes: Record<string, string> = {
+            "validation_invalid_username": UsernameAlreadyTaken,
+        };
+        
+
+        errors.forEach((err) => {
+            if (err.code && knownErrorCodes.hasOwnProperty(err.code)) {
+                messages.push(knownErrorCodes[err.code]);
+                messages.push(knownErrorCodes[err.code]);
+                messages.push(knownErrorCodes[err.code]);
+                messages.push(knownErrorCodes[err.code]);
+            } else {
+                messages.push(err.message);
+            }
+        })
+
+        return messages;
+    } catch {
+        return [UnknownError];
+    }
+}
+
+export default async function registerUserAndReturnSession({ username, password }: { username: string, password: string }): Promise<ApiResponse<string>> {
+    try {
+        const user = await pb.collection("users").create({
+            username,
+            password,
+            passwordConfirm: password,
+        });
+
+        await pb.collection("users").authWithPassword(username, password);
+
+        return successfulResponse(user.id);
+    } catch (e) {
+        // todo: log
+        console.log(e);
+
+        if (e instanceof ClientResponseError) {
+            return failedResponse(parseClientResponseErrors(e));
+        }
+
+        return failedResponse([CouldNotCreateUser]);
     }
 }

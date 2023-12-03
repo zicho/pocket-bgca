@@ -1,10 +1,15 @@
 import 'unplugin-icons/types/svelte'
+import type PocketBase from 'pocketbase'
+import type { AuthModel } from 'pocketbase';
 
 declare global {
 	namespace App {
 		interface Locals {
-			auth: import("lucia").AuthRequest;
+			// auth: import("lucia").AuthRequest;
+			pb: PocketBase;
+			user: AuthModel | undefined;
 		}
+
 		interface PageData {
 			flash?: {
 				type: "success" | "error" | "info" | "warning";

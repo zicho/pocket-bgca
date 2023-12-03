@@ -1,32 +1,22 @@
 import type { LayoutServerLoad } from "./$types";
 import { loadFlash, redirect } from "sveltekit-flash-message/server";
-import type { User } from "lucia";
 
 export const load: LayoutServerLoad = loadFlash(async (event) => {
-	const { locals, route, url } = event;
-	const session = await locals.auth.validate();
+	const { locals, cookies } = event;
+	const user = locals.user;
 
-	if (route?.id?.includes("(protected)")) {
-		if (!session) {
-			const redirectToUrl = url.pathname + url.search;
-
-			if (redirectToUrl.length > 1) {
-				throw redirect(
-					302,
-					`/login?redirect=${redirectToUrl}`,
-					{
-						type: "error",
-						message: "You must be logged in to access this resource"
-					},
-					event
-				);
-			}
-
-			throw redirect(302, `/login`);
+	try {
+		if (locals.pb.authStore.isValid) {
+			await event.locals.pb.collection('users').authRefresh();
+		}
+	} catch (_) {
+		if (cookies.get("pb_auth")) {
+			cookies.delete("pb_auth");
+			throw redirect(303, "/login");
 		}
 	}
 
 	return {
-		user: session?.user as User
+		user
 	};
 });

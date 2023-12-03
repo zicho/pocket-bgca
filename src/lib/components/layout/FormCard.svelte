@@ -14,8 +14,8 @@
 	<slot />
 
 	{#if errorMessage}
-		<div class="card p-8 bg-error" id="error-message-box" data-testid="error-message-box">
-			<span class="text-center">{errorMessage}</span>
+		<div class="card p-4 bg-error" id="error-message-box" data-testid="error-message-box">
+			<span class="text-center">{@html errorMessage}</span>
 		</div>
 	{/if}
 </article>

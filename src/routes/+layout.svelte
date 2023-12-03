@@ -1,15 +1,15 @@
 <script lang="ts">
 	import '$lib/css/app.css';
-	import type { PageData } from './(protected)/$types';
+
 	import { getFlash } from 'sveltekit-flash-message/client';
 	import { page } from '$app/stores';
 	import { beforeNavigate } from '$app/navigation';
 	import Navbar from '$lib/components/ui/Navbar.svelte';
-	import BasePageLayout from '$lib/components/layout/BasePageLayout.svelte';
+	import type { LayoutData } from './$types';
 
-	export let data: PageData;
+	export let data: LayoutData;
 
-	$: ({ user, notificationCount } = data);
+	$: ({ user } = data);
 
 	const flash = getFlash(page);
 

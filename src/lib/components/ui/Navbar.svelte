@@ -1,16 +1,14 @@
 <script lang="ts">
 	import NavbarLink from '$lib/components/ui/NavbarLink.svelte';
 	import generateNavbarLinks from '$lib/data/layout/navbarLinks';
-	import type { User } from 'lucia';
+	import type { AuthModel } from 'pocketbase';
 	import MenuIcon from 'virtual:icons/lucide/menu';
 
-	export let user: User;
+	export let user: AuthModel | undefined;
 
 	let open: boolean;
 
-	// reactive to changes in user state
 	$: navbarLinks = generateNavbarLinks(user);
-
 	$: menuDataAuthenticated = navbarLinks.filter((item) => item.authOnly);
 	$: menuDataNotAuthenticated = navbarLinks.filter((item) => !item.authOnly);
 </script>

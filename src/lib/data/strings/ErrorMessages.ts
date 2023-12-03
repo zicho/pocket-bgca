@@ -1,3 +1,4 @@
+export const UnknownError = "An unknown error occurred";
 export const UsernameAlreadyTaken = "Username already taken";
 export const CouldNotCreateUser = "Failed to create user";
 export const CouldNotSignInUser = "Failed to authenticate user";

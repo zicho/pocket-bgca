@@ -164,5 +164,5 @@ test('vw-register-no_duplicate_username', async ({ page }) => {
 	await registerButton.click();
 
 	await (expect(page.getByTestId("error-message-box")).toBeVisible());
-	await (expect(page.getByTestId("error-message-box")).toHaveText(UsernameAlreadyTaken));
+	await (expect(page.getByTestId("error-message-box")).toContainText(UsernameAlreadyTaken));
 });
