@@ -31,11 +31,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	if (event.route?.id?.includes("(protected)") && !event.locals.user) {
-		throw redirect(303, "/login")
+		redirect(303, "/login");
 	}
 
 	if (event.route?.id?.includes("(non_authed)") && event.locals.user) {
-		throw redirect(303, "/")
+		redirect(303, "/");
 	}
 
 	const response = await resolve(event);

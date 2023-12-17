@@ -5,5 +5,5 @@ export const GET: RequestHandler = async ({ locals }) => {
 	locals.pb.authStore.clear();
 	locals.user = undefined;
 	
-	throw redirect(302, "/login");
+	redirect(302, "/login");
 };
