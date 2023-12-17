@@ -54,12 +54,6 @@
 		label: 'Already a member? Log in here.',
 		href: '/login'
 	};
-
-	const errorMessageBoxProps: IErrorMessageBox = {
-		id: 'error-message-box',
-		message: get(message),
-		show: true
-	};
 </script>
 
 <svelte:head>

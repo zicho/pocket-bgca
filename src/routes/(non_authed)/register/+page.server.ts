@@ -3,9 +3,10 @@ import { redirect } from "sveltekit-flash-message/server";
 import type { PageServerLoad } from "./$types";
 import { message, superValidate } from "sveltekit-superforms/server";
 import registerUserSchema from "$lib/data/validation_schemas/registerUserSchema";
-import registerUserAndReturnSession from "$lib/db/queries/authentication/registerUserAndReturnSession";
+import createUserAndReturnId from "$lib/db/queries/authentication/registerUserAndReturnSession";
 import type { Session } from "lucia";
 import { pb } from "$lib/db/pb";
+import formatMessagesToHtmlWithLineBreaks from "$lib/utils/formatMessagesToHtmlWithLineBreaks";
 
 export const load = (async (event) => {
     const form = await superValidate(event, registerUserSchema);
@@ -24,7 +25,7 @@ export const load = (async (event) => {
 
 export const actions: Actions = {
     default: async (event) => {
-        const { request, locals } = event;
+        const { request } = event;
 
         const form = await superValidate(request, registerUserSchema);
 
@@ -35,14 +36,10 @@ export const actions: Actions = {
             return fail(400, { form });
         }
 
-        const response = await registerUserAndReturnSession(form.data);
-
-        function formatMessages(messages: string[]): string {
-            return messages.map(item => `${item}</br>`).join('');
-        }
+        const response = await createUserAndReturnId(form.data);
 
         if (response.error) {
-            return message(form, formatMessages(response.messages));
+            return message(form, formatMessagesToHtmlWithLineBreaks(response.messages));
         } 
         
         throw redirect(

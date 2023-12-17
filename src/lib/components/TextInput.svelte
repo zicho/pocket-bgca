@@ -22,6 +22,7 @@
 		aria-label={props.placeholder}
 		class="input input-bordered w-full"
 		class:input-error={props.hasError || props.errorMessage}
+		class:text-error={props.hasError || props.errorMessage} 
 		aria-invalid={props.hasError || props.errorMessage != undefined}
 		required={props.required}
 	/>

@@ -1,7 +1,7 @@
 // import { deleteAllUsers } from '$lib/db/queries/testing/deleteAllUsers';
 import { expect, test } from '@playwright/test';
 import generateTestUsername from '../../test_utils/generateTestUsername';
-import registerUserAndReturnSession from '$lib/db/queries/authentication/registerUserAndReturnSession';
+import createUserAndReturnId from '$lib/db/queries/authentication/registerUserAndReturnSession';
 import { UsernameAlreadyTaken } from '$lib/data/strings/ErrorMessages';
 
 test('vw-register-form_visibility', async ({ page }) => {
@@ -150,7 +150,7 @@ test('vw-register-no_duplicate_username', async ({ page }) => {
 
 	const username = generateTestUsername();
 
-	await registerUserAndReturnSession({ username, password: "password" });
+	await createUserAndReturnId({ username, password: "password" });
 
 	// all fields need to be filled to pass browser form validation
 	const usernameInput = page.getByTestId("username");
