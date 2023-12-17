@@ -4,8 +4,6 @@ import type { PageServerLoad } from "./$types";
 import { message, superValidate } from "sveltekit-superforms/server";
 import registerUserSchema from "$lib/data/validation_schemas/registerUserSchema";
 import createUserAndReturnId from "$lib/db/queries/authentication/registerUserAndReturnSession";
-import type { Session } from "lucia";
-import { pb } from "$lib/db/pb";
 import formatMessagesToHtmlWithLineBreaks from "$lib/utils/formatMessagesToHtmlWithLineBreaks";
 
 export const load = (async (event) => {
